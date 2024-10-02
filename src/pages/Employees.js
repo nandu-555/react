@@ -72,7 +72,7 @@ function Employees() {
   // console.log('We are able to list the employees');
   const showEmployees = true;
   return (
-    <div className="App  bg-gray-300 min-h-screen">
+    <div className="">
       {showEmployees ? (
           <>
 
@@ -86,7 +86,7 @@ function Employees() {
             /> */}
 
 
-            <div className="flex flex-wrap justify-center my-2">
+            <div className="flex flex-wrap justify-center">
                 {employees.map((employee) => {
                   const editEmployee = (
                   <EditEmployee id={employee.id} name={employee.name} role={employee.role} updateEmployee={updateEmployee} /> 
