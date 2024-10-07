@@ -6,6 +6,7 @@ const navigation = [
   { name: 'Employees', href: '/Employees'},
   { name: 'Customers', href: '/Customers' },
   { name: 'Dictionary', href: '/dictionary' },
+  // { name: 'Definition', href: '/definition' },
   { name: 'Calendar', href: '/other2' },
 ]
 
@@ -100,7 +101,7 @@ export default function Header(props) {
       <footer>Example</footer>
     </Disclosure>
     <div className="bg-gray-300">
-      <div className="max-w-screen mx-auto min-h-screen px-2 py-2">{props.children}</div>
+      <div className="max-w-screen mx-auto min-h-screen px-3 py-2">{props.children}</div>
       {/* <div className="max-w-7xl mx-auto bg-gray-300 min-h-screen px-2 py-2">{props.children}</div> */}
     </div>
     </>
