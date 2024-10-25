@@ -2,12 +2,23 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NotFound from "../components/NotFound";
 import { baseUrl } from "../shared";
+import { CodeBracketSquareIcon } from "@heroicons/react/16/solid";
 
 export default function Customer() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [customer, setCustomer] = useState();
+    const [tempCustomer, setTempCustomer] = useState();
     const [notFound, setNotFound] = useState();
+    const [changed, setChanged] = useState(false);
+
+    useEffect(() => {
+        // console.log('customer', customer);
+        // console.log('temp customer', tempCustomer);
+        // console.log('changed');
+    });
+
+
     useEffect(() => {
         console.log('useEffect');
         const url = baseUrl + 'api/customers/' + id;
@@ -20,9 +31,28 @@ export default function Customer() {
             return response.json();
         })
         .then((data) => {
-            setCustomer(data.customer)
+            setCustomer(data.customer);
+            setTempCustomer(data.customer);
         });
     }, []);
+
+    function updateCustomer(){
+        const url = baseUrl + 'api/customers/' + id;
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(tempCustomer)
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            setCustomer(data.customer);
+            console.log(data);
+        }).catch();
+    }
 
     return  (
     <> 
@@ -30,9 +60,26 @@ export default function Customer() {
 
         {customer ? (
             <div>
-                <p>{customer.id}</p>
-                <p>{customer.name}</p>
-                <p>{customer.industry}</p>
+                {/* <p className="m-2 block px-2" >ID: {tempCustomer.id}  </p> */}
+                
+                <input className="m-2 block px-2" type="text" value={tempCustomer.name} onChange={(e) => {
+                    setChanged(true);
+                    setTempCustomer({...tempCustomer, name: e.target.value,});
+                }} />
+                <input className="m-2 block px-2" type="text" value={tempCustomer.industry} onChange={(e) => {
+                    setChanged(true);
+                    setTempCustomer({...tempCustomer, industry: e.target.value,});
+                }} />
+                {changed ? (
+                    <>
+                        <button onClick={(e) => {
+                            setTempCustomer({...customer});
+                            setChanged(false);
+                        }}>Cancel</button> 
+
+                        <button onClick={updateCustomer}>Save</button>
+                    </> 
+                ) : null}
             </div>
         ) : null} 
         <button 

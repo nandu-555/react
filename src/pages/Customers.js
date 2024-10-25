@@ -12,7 +12,7 @@ export default function Customers(){
     }
 
     useEffect(() => {
-        const url = baseUrl + 'api/customers/'
+        const url = baseUrl + 'api/customers/';
         fetch(url).
         then((response) => response.json())
         .then((data) => {
@@ -61,4 +61,3 @@ export default function Customers(){
     );
 
 }
-
