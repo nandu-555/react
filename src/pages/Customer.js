@@ -13,9 +13,14 @@ export default function Customer() {
     const [changed, setChanged] = useState(false);
 
     useEffect(() => {
-        // console.log('customer', customer);
-        // console.log('temp customer', tempCustomer);
-        // console.log('changed');
+        if (!customer) return;
+        if (!tempCustomer) return;
+        let equal = true;
+        if (customer.name !== tempCustomer.name) equal = false;
+
+        if (customer.industry !== tempCustomer.industry) equal = false;
+        
+        if (equal) setChanged(false);
     });
 
 
@@ -54,6 +59,8 @@ export default function Customer() {
         }).catch();
     }
 
+    
+
     return  (
     <> 
         {notFound ? <p>The customer with id {id} was not found</p> : null}
@@ -72,12 +79,12 @@ export default function Customer() {
                 }} />
                 {changed ? (
                     <>
-                        <button onClick={(e) => {
+                        <button className="m-2" onClick={(e) => {
                             setTempCustomer({...customer});
                             setChanged(false);
                         }}>Cancel</button> 
 
-                        <button onClick={updateCustomer}>Save</button>
+                        <button className="m-2" onClick={updateCustomer}>Save</button>
                     </> 
                 ) : null}
             </div>
@@ -107,5 +114,11 @@ export default function Customer() {
      </>
     );
 }
+
+
+
+
+
+
 
 
