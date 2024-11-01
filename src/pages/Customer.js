@@ -1,5 +1,5 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Link, resolvePath, useNavigate, useParams } from "react-router-dom";
+import { useDebugValue, useEffect, useState } from "react";
 import NotFound from "../components/NotFound";
 import { baseUrl } from "../shared";
 import { CodeBracketSquareIcon } from "@heroicons/react/16/solid";
@@ -11,6 +11,7 @@ export default function Customer() {
     const [tempCustomer, setTempCustomer] = useState();
     const [notFound, setNotFound] = useState();
     const [changed, setChanged] = useState(false);
+    const [error, setError] = useState();
 
     useEffect(() => {
         if (!customer) return;
@@ -33,12 +34,21 @@ export default function Customer() {
                 //render a 404 component in this page
                 setNotFound(true);
             }
+
+            if (!response.ok)
+                // console.log('response', response);
+                throw new Error('Something went wrong, try again later');
+            
             return response.json();
         })
         .then((data) => {
             setCustomer(data.customer);
             setTempCustomer(data.customer);
-        });
+            setError(undefined);
+        })
+        .catch((e) => {
+            setError(e.message);
+        })
     }, []);
 
     function updateCustomer(){
@@ -51,12 +61,20 @@ export default function Customer() {
             body: JSON.stringify(tempCustomer)
         })
         .then((response) => {
+            // console.log('response', response);
+            if (!response.ok) throw new Error('something went wrong');
             return response.json();
         })
         .then((data) => {
             setCustomer(data.customer);
+            setChanged(false);
             console.log(data);
-        }).catch();
+            setError(undefined);
+        })
+        .catch((e) => {
+            // console.log('e', e);
+            setError(e.message);
+        });
     }
 
     
@@ -87,28 +105,31 @@ export default function Customer() {
                         <button className="m-2" onClick={updateCustomer}>Save</button>
                     </> 
                 ) : null}
+
+                <button 
+                    onClick={(e) => {
+                        const url = baseUrl + 'api/customers/' + id;
+                        fetch(url, { method: 'DELETE', headers:{
+                            'Content-Type' : 'application/json',
+                        },
+                    })
+                        .then((response) => {
+                            if(!response.ok){
+                                throw new Error('Something went wrong');
+                            }
+                            navigate('/customers');
+                        } )
+                        .catch((e) => {
+                            setError(e.message);
+                        });
+                    }}
+                >
+                    Delete
+                </button>
             </div>
         ) : null} 
-        <button 
-            onClick={(e) => {
-                const url = baseUrl + 'api/customers/' + id;
-                fetch(url, { method: 'DELETE', headers:{
-                    'Content-Type' : 'application/json',
-                },
-             })
-                .then((response) => {
-                    if(!response.ok){
-                        throw new Error('Something went wrong');
-                    }
-                    navigate('/customers');
-                } )
-                .catch((e) => {
-                    console.log(e);
-                });
-            }}
-        >
-            Delete
-        </button>
+
+        {error ? <p>{error}</p> : null}
         <br />
         <Link to='/customers'>Go back</Link>
      </>
